@@ -1,23 +1,17 @@
 import React from 'react'
-import Image from 'next/image'
 import { Block, Button, View } from 'vcc-ui';
 import Page from '~/containers/Page'
-import { CarModel, CarsResponse } from '~/types';
+import { CarsResponse } from '~/types';
 import { useQuery } from 'react-query';
-
+import { getCars } from '~/api';
+import CarsSlideshow from '~/components/CarsSlideshow';
 
 export default function Home() {
 
-  const fetchCars = async (): Promise<CarsResponse> => {
-    const res = await fetch("/api/cars");
-    if (!res.ok) {
-      throw new Error("Something went wrong with your request");
-    }
-    return res.json();
-  };
+
 
   // Let the client fetch the data from the server and use react-query to cache the data
-  const { data, isLoading } = useQuery<CarsResponse>("cars", fetchCars);
+  const { data, isLoading } = useQuery<CarsResponse>("cars", getCars);
 
   const cars = data?.result ?? [];
 
@@ -25,7 +19,7 @@ export default function Home() {
 
   return (
     <Page title="cars">
-      hej
+      {Array.isArray(cars) && cars.length > 0 && (<CarsSlideshow cars={cars} />)}
     </Page>
   )
 }
